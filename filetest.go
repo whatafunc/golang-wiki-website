@@ -9,7 +9,14 @@ import (
 )
 
 // Use ParseGlob to parse all templates, including partials
-var templates = template.Must(template.ParseGlob("templates/*.html"))
+//var templates = template.Must(template.ParseGlob("templates/**/*.html"))
+
+var templates = template.Must(template.ParseFiles(
+	"templates/base.html",
+	"templates/home.html",
+	"templates/partials/footer.html",
+	// Add other template paths here if needed
+))
 
 type Page struct {
 	Title string
@@ -69,7 +76,7 @@ func defaultViewHandler(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(m)
 
 	//p := &Page{Title: "Test Page", Body: []byte("This is a test page body")}
-	renderAppTemplate(w, "base", m)
+	renderAppTemplate(w, "home", m)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
@@ -123,12 +130,40 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
 
-func renderAppTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+func renderAppTemplate(w http.ResponseWriter, template string, data interface{}) {
 	//the following appraoch can't load 'partials' so it's replaced with `ExecuteTemplate`
 	//t, _ := template.ParseFiles("templates/" + tmpl + ".html")
 	//t.Execute(w, p)
 
-	err := templates.ExecuteTemplate(w, tmpl+".html", p)
+	// Parse the base template
+	/*
+		tmpl, err := template.New("base.html").ParseFiles("templates/base.html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	*/
+
+	tmpl, _ := templates.Clone()
+
+	// Parse the content (child) template if specified
+	if template != "" {
+		_, err := tmpl.ParseFiles("templates/" + template + ".html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	//add footer
+	_, err := tmpl.ParseFiles("templates/partials/footer.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Execute the base template
+	err = tmpl.ExecuteTemplate(w, "base.html", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
