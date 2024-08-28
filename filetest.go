@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 // Use ParseGlob to parse all templates, including partials
@@ -19,8 +20,9 @@ var templates = template.Must(template.ParseFiles(
 ))
 
 type Page struct {
-	Title string
-	Body  []byte
+	Title     string
+	Body      []byte
+	Timestamp int64
 }
 
 func main() {
@@ -34,6 +36,7 @@ func main() {
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/edit/", editHandler)
 	http.HandleFunc("/save/", saveHandler)
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
 
@@ -43,7 +46,7 @@ func loadPage(title string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Title: title, Body: body}, nil
+	return &Page{Title: title, Body: body, Timestamp: time.Now().Unix()}, nil
 }
 
 func (p *Page) save() error {
@@ -67,8 +70,9 @@ func defaultViewHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m := map[string]interface{}{
-		"Results": results,
-		//"Other":   []int{1, 2, 3},
+		"Results":   results,
+		"Title":     "Home Page",
+		"Timestamp": time.Now().Unix(),
 	}
 
 	//t, _ := template.ParseFiles("templates/default.html")
@@ -85,7 +89,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//http.Redirect(w, r, "/view/"+title, http.StatusFound)
 		//fmt.Println("landed on %s", title)
-		p = &Page{Title: title, Body: nil}
+		p = &Page{Title: title, Body: nil, Timestamp: time.Now().Unix()}
 		renderAppTemplate(w, "404", p)
 		return
 	}
@@ -102,7 +106,7 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/edit/"):]
 	p, err := loadPage(title)
 	if err != nil {
-		p = &Page{Title: title}
+		p = &Page{Title: title, Timestamp: time.Now().Unix()}
 	}
 
 	//fmt.Println("Body = %s", p.Body)

@@ -107,28 +107,28 @@ Just use this repo and start it locally
 
 * bash
   ``` 
+  git clone https://github.com/whatafunc/golang-wiki-website.git
   go run filetest.go 
   ```
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
+1. install git
 2. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/whatafunc/golang-wiki-website.git
    ```
-3. Install NPM packages
+3. Install Go engine
    ```sh
-   npm install
+   brew install go
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-5. Change git remote url to avoid accidental pushes to base project
+4. run your go webserver `go run filetest.go `
    ```sh
-   git remote set-url origin github_username/repo_name
-   git remote -v # confirm the changes
+   go run filetest.go 
+   ```
+5. visit 
+   ```
+   http://localhost:8000/
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -138,9 +138,7 @@ Just use this repo and start it locally
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
+Just browse the links and either view or edit the pages of the small WiKi like local website
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -149,12 +147,12 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [x] release
+- [ ] add some json and do fuzz tests 
+- [ ] dev unit tests for go
+    - [ ] unit test go 
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/whatafunc/tweaking-a-stackoverflow-example-in-go/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -169,9 +167,9 @@ If you have a suggestion that would make this better, please fork the repo and c
 Don't forget to give the project a star! Thanks again!
 
 1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+2. Create your Feature Branch  
+3. Commit your Changes 
+4. Push to the Branch 
 5. Open a Pull Request
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -191,24 +189,12 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-<!-- CONTACT -->
-## Contact
-
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+ 
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+* [go.dev](go.dev)
+* [stackoverflow.co/](https://stackoverflow.co/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

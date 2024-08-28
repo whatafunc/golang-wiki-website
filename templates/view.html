@@ -1,5 +1,6 @@
-<h1>Viewing {{.Title}}</h1>
-
+{{ define "content" }}
 <div>{{printf "%s" .Body}}</div>
 
-<a href="/edit/{{.Title}}">Edit</a>
+<a href="/edit/{{.Title}}">Edit ></a><br />
+<a href="/">Home ></a>
+{{ end }}
