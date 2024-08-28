@@ -1,0 +1,8 @@
+{{ define "content" }}
+    <div>Menu: </div>
+    <ul>
+    {{range .Results}}
+        <li>visit: <a href="/view/{{.}}">{{.}}</a></li>
+    {{end}}
+    </ul>
+{{ end }}
