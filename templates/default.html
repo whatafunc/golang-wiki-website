@@ -1,0 +1,6 @@
+<h1>Home page of micro web site</h1>
+
+<div>Menu: </div>
+{{range .Results}}
+ visit: <a href="/view/{{.}}">{{.}}</a><br />
+{{end}}

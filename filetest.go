@@ -8,6 +8,9 @@ import (
 	"os"
 )
 
+// Use ParseGlob to parse all templates, including partials
+var templates = template.Must(template.ParseGlob("templates/*.html"))
+
 type Page struct {
 	Title string
 	Body  []byte
@@ -20,6 +23,7 @@ func main() {
 		p2, _ := loadPage("TestPage")
 		fmt.Println(string(p2.Body))
 	*/
+	http.HandleFunc("/", defaultViewHandler)
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/edit/", editHandler)
 	http.HandleFunc("/save/", saveHandler)
@@ -40,13 +44,41 @@ func (p *Page) save() error {
 	return os.WriteFile(filename, p.Body, 0600)
 }
 
+func defaultViewHandler(w http.ResponseWriter, r *http.Request) {
+	results := []string{}
+	filesWiki, err := os.ReadDir(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, fileWiki := range filesWiki {
+		fileWikiNameLen := len(fileWiki.Name()) - 4
+		if fileWiki.Name()[fileWikiNameLen:] == ".txt" {
+			fmt.Println(fileWiki.Name())
+			results = append(results, fileWiki.Name()[:fileWikiNameLen])
+		}
+	}
+
+	m := map[string]interface{}{
+		"Results": results,
+		//"Other":   []int{1, 2, 3},
+	}
+
+	//t, _ := template.ParseFiles("templates/default.html")
+	//t.Execute(w, m)
+	//fmt.Println(m)
+
+	//p := &Page{Title: "Test Page", Body: []byte("This is a test page body")}
+	renderAppTemplate(w, "base", m)
+}
+
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
 	p, err := loadPage(title)
 	if err != nil {
 		//http.Redirect(w, r, "/view/"+title, http.StatusFound)
 		//fmt.Println("landed on %s", title)
-		p = &Page{Title: title, Body: []byte("status")}
+		p = &Page{Title: title, Body: nil}
 		renderAppTemplate(w, "404", p)
 		return
 	}
@@ -65,7 +97,8 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		p = &Page{Title: title}
 	}
-	fmt.Println("Body = %s", p.Body)
+
+	//fmt.Println("Body = %s", p.Body)
 	//log.Fatalln("Body = %s", p.Body)
 
 	//hardcoded html code
@@ -91,6 +124,13 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderAppTemplate(w http.ResponseWriter, tmpl string, p *Page) {
-	t, _ := template.ParseFiles("templates/" + tmpl + ".html")
-	t.Execute(w, p)
+	//the following appraoch can't load 'partials' so it's replaced with `ExecuteTemplate`
+	//t, _ := template.ParseFiles("templates/" + tmpl + ".html")
+	//t.Execute(w, p)
+
+	err := templates.ExecuteTemplate(w, tmpl+".html", p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
 }
